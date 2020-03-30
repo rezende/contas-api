@@ -7,4 +7,19 @@ class CheckingAccount < ApplicationRecord
   has_many :transactions_as_destination, class_name: 'Transaction',
                                          foreign_key: :destination_account_id,
                                          inverse_of: :destination_account
+
+  def current_balance
+    amount = inbound_money - outbound_money
+    amount.to_s
+  end
+
+  private
+
+  def inbound_money
+    transactions_as_destination.sum(:amount)
+  end
+
+  def outbound_money
+    transactions_as_source.sum(:amount)
+  end
 end
