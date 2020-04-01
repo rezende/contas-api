@@ -74,3 +74,14 @@ O valor da transferencia e sempre positivo (um debito)
 ```
 rails test
 ```
+
+
+## GEMS usadas
+
+ - `simple_command`, `jwt`, `bcrypt`
+
+ Gems usadas para autenticacao. Sistema de autenticao inspirado por https://www.pluralsight.com/guides/token-based-authentication-with-ruby-on-rails-5-api
+
+  - `active_model_serializers`
+
+  Gem usada para facilitar a serializacao do saldo da conta
