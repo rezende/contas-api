@@ -8,9 +8,16 @@ class CheckingAccount < ApplicationRecord
                                          foreign_key: :destination_account_id,
                                          inverse_of: :destination_account
 
+  validates :name, presence: true
+
   def current_balance
-    amount = inbound_money - outbound_money
-    amount.to_s
+    inbound_money - outbound_money
+  end
+
+  def self.find_by_id(id)
+    CheckingAccount.find id
+  rescue ActiveRecord::RecordNotFound
+    nil
   end
 
   private

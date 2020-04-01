@@ -9,17 +9,12 @@ class CheckingAccountsControllerTest < ActionDispatch::IntegrationTest
     @token = AuthenticateUser.call(email, password).result
   end
 
-  # test "should get index" do
-  # get checking_accounts_url, as: :json
-  # assert_response :success
-  # end
-
   test "should create checking_account with required parameters" do
     assert_difference('CheckingAccount.count') do
       assert_difference('Transaction.count') do
         post(
           checking_accounts_url,
-          params: { name: 'Citibank', amount: 299.98 },
+          params: { checking_account: { name: 'Citibank', amount: 299.98 } },
           headers: { Authorization: @token },
           as: :json
         )
@@ -29,21 +24,31 @@ class CheckingAccountsControllerTest < ActionDispatch::IntegrationTest
     assert_response 201
   end
 
-  # test "should show checking_account" do
-  # get checking_account_url(@checking_account), as: :json
-  # assert_response :success
-  # end
-  #
-  # test "should update checking_account" do
-  # patch checking_account_url(@checking_account), params: { checking_account: { user_id: @checking_account.user_id } }, as: :json
-  # assert_response 200
-  # end
-  #
-  # test "should destroy checking_account" do
-  # assert_difference('CheckingAccount.count', -1) do
-  # delete checking_account_url(@checking_account), as: :json
-  # end
-  #
-  # assert_response 204
-  # end
+  test "test create when account already exists" do
+    assert_no_difference('CheckingAccount.count') do
+      assert_no_difference('Transaction.count') do
+        post(
+          checking_accounts_url,
+          params: { checking_account: { id: @checking_account.id, name: 'Citibank', amount: 299.98 } },
+          headers: { Authorization: @token },
+          as: :json
+        )
+      end
+    end
+
+    response = JSON.parse(@response.body)
+    assert_equal response['id'], @checking_account.id, response
+    assert_response 400
+  end
+
+  test "should show checking_account" do
+    get checking_account_url(@checking_account), as: :json, headers: { Authorization: @token }
+    assert_response :success
+    response = JSON.parse(@response.body)
+    assert response.key?('id')
+    assert response.key?('name')
+    assert response.key?('user_id')
+    assert response.key?('current_balance')
+  end
+
 end

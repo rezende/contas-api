@@ -1,3 +1,4 @@
+# checking_accounts
 class CheckingAccountsController < ApplicationController
   before_action :set_checking_account, only: %i[show]
 
@@ -9,10 +10,10 @@ class CheckingAccountsController < ApplicationController
   # POST /checking_accounts
   def create
     id = checking_account_params[:id]
-    @checking_account = find_by_id id
+    @checking_account = CheckingAccount.find_by_id id
     if @checking_account
-      error_message = "Checking Account already exists"
-      render json: "{\"id\": #{id},\"error_message\": #{error_message}}"
+      error_message = 'Checking Account already exists'
+      render json: { id: id, error_message: error_message }, status: 400
       return
     end
     ActiveRecord::Base.transaction do
@@ -21,17 +22,17 @@ class CheckingAccountsController < ApplicationController
       )
       @checking_account.id = id if id
       @checking_account.save
-      Transaction.create(
+      Transaction.create!(
         destination_account: @checking_account,
         amount: checking_account_params[:amount],
-        message: 'Initial transfer'
+        message: 'Open Account'
       )
     end
     render json: @checking_account,
            status: :created,
            location: @checking_account
   rescue StandardError
-    render json: '{"message": "There was an error processing your request"}',
+    render json: { message: 'There was an error processing your request' },
            status: :unprocessable_entity
   end
 
@@ -43,11 +44,5 @@ class CheckingAccountsController < ApplicationController
 
   def checking_account_params
     params.require(:checking_account).permit(:id, :name, :amount)
-  end
-
-  def find_by_id(id)
-    CheckingAccount.find id
-  rescue ActiveRecord::RecordNotFound
-    nil
   end
 end
