@@ -47,7 +47,7 @@ Exemplo
 
 `$ curl -H "Content-Type: application/json" -H "Authorization: <auth_token>" -X GET http://localhost:3000/checking_accounts/1`
 
-### Operaçoes na conta - Deposito, Saque e Transferencia
+### Operaçoes na conta - Depósito, Saque e Transferência
 
  - URL: `/transactions`
  - Parametros de entrada: `source_account_id`, `destination_account_id` e `amount`
